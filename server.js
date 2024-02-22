@@ -1,6 +1,9 @@
-const express = require('express');
-const cors = require('cors');
-const db = require('./db/db_connection'); 
+import Db from './db/db_connection.js';
+import express from 'express';
+import cors from 'cors';
+import productApi from './routes/productApi.js';
+import bodyParser from 'body-parser';
+
 
 const app = express();
 const port = 5000;
@@ -9,15 +12,12 @@ app.use(cors({
     origin: 'http://localhost:3000'
 }));
 
-db.connectToServer(function (err) {
-    if (err) {
-        console.error('Error connecting to MongoDB:', err);
-        process.exit(1);
-    } 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(productApi);
 
-    console.log('Connected to MongoDB');
+new Db();
 
-    app.listen(port, () => {
+app.listen(port, () => {
         console.log(`Server is running on port: ${port}`);
     });
-}); // This closing bracket and parenthesis were missing
